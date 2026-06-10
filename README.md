@@ -91,16 +91,6 @@ See [`assets/README.md`](assets/README.md) for image filenames and sizes.
 
 ---
 
-## Logo & exe icon (Windows)
-
-Place a square PNG at **`assets/logo.png`** (256×256 or larger recommended).
-
-On each build, `app.ico` is generated from it and embedded into `SpireOfAzael.exe`. The same image is used for the in-game window icon.
-
-Replace `logo.png` and rebuild to update the icon. If Explorer still shows the old icon, refresh the folder (F5).
-
----
-
 ## Sharing with friends
 
 Zip the **Release folder contents** — do not send only the `.exe`:
