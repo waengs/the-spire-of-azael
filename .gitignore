@@ -1,0 +1,30 @@
+# CMake / MSVC build output (recreated by: cmake -B build && cmake --build build --config Release)
+/build/
+/out/
+
+# Visual Studio
+.vs/
+*.sln
+*.slnx
+*.suo
+*.user
+*.opendb
+*.db
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Runtime (created when you play)
+imgui.ini
+spire_save.db
+
+# Old / stray binaries
+ZorkGame.exe
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor / scratch (not used by the game)
+textchange.txt
