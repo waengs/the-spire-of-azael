@@ -82,7 +82,6 @@ TheSpireofAzael/
   compile.bat           One-click Windows build
   assets/               Fonts, logo, portraits, UI art
   windows/app.rc        Windows exe icon resource
-  scripts/png_to_ico.ps1  Converts logo.png → app.ico
 ```
 
 See [`assets/README.md`](assets/README.md) for image filenames and sizes.

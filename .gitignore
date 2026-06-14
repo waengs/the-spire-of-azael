@@ -1,6 +1,7 @@
 # CMake / MSVC build output (recreated by: cmake -B build && cmake --build build --config Release)
 /build/
 /out/
+/dist/
 
 # Visual Studio
 .vs/
@@ -27,4 +28,5 @@ Desktop.ini
 .DS_Store
 
 # Editor / scratch (not used by the game)
+.cursor/
 textchange.txt

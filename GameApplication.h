@@ -112,7 +112,7 @@ private:
     bool bootWithSnapshot_ = false;
 
     int selectedSaveSlot_ = 1;
-    char saveLabelBuffer_[64] = "Adventure";
+    char saveLabelBuffer_[kMaxSaveLabelLength + 1] = "Adventure";
 
     StatusCache status_;
     std::mutex statusMutex_;

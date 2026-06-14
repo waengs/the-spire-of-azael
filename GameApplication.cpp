@@ -580,7 +580,10 @@ bool GameApplication::saveToSlot(int slot) {
         return false;
     }
 
-    const std::string label = trimCopy(saveLabelBuffer_);
+    std::string label = trimCopy(saveLabelBuffer_);
+    if (label.size() > kMaxSaveLabelLength) {
+        label.resize(kMaxSaveLabelLength);
+    }
     if (!database_.saveSlot(slot, snapshot, label.empty() ? "Adventure" : label)) {
         appendOutput("Save failed: " + database_.lastError() + "\n");
         return false;

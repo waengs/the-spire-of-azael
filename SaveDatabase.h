@@ -6,6 +6,8 @@
 #include <optional>
 #include <string>
 
+constexpr std::size_t kMaxSaveLabelLength = 16;
+
 class SaveDatabase {
 public:
     explicit SaveDatabase(std::string path);

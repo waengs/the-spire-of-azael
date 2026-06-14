@@ -80,6 +80,11 @@ bool SaveDatabase::saveSlot(int slot, const GameSnapshot& snapshot, const std::s
         return false;
     }
 
+    std::string trimmedLabel = label;
+    if (trimmedLabel.size() > kMaxSaveLabelLength) {
+        trimmedLabel.resize(kMaxSaveLabelLength);
+    }
+
     const std::string blob = serializeSnapshot(snapshot);
     const std::string savedAt = nowIso8601();
 
@@ -94,7 +99,7 @@ bool SaveDatabase::saveSlot(int slot, const GameSnapshot& snapshot, const std::s
     }
 
     sqlite3_bind_int(stmt, 1, slot);
-    sqlite3_bind_text(stmt, 2, label.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, trimmedLabel.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 3, savedAt.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 4, blob.c_str(), -1, SQLITE_TRANSIENT);
 
@@ -174,7 +179,7 @@ std::string SaveDatabase::slotLabel(int slot) const {
     }
 
     sqlite3_stmt* stmt = nullptr;
-    const char* sql = "SELECT label, saved_at FROM save_slots WHERE slot = ?;";
+    const char* sql = "SELECT label FROM save_slots WHERE slot = ?;";
     if (sqlite3_prepare_v2(reinterpret_cast<sqlite3*>(db_), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return "Empty";
     }
@@ -183,9 +188,11 @@ std::string SaveDatabase::slotLabel(int slot) const {
     std::string label = "Empty";
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         const char* name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-        const char* savedAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-        if (name && savedAt) {
-            label = std::string(name) + " (" + savedAt + ")";
+        if (name) {
+            label = name;
+            if (label.size() > kMaxSaveLabelLength) {
+                label.resize(kMaxSaveLabelLength);
+            }
         }
     }
     sqlite3_finalize(stmt);

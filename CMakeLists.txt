@@ -83,18 +83,6 @@ add_executable(SpireOfAzael
 
 if(WIN32)
     target_sources(SpireOfAzael PRIVATE windows/app.rc)
-
-    if(EXISTS "${CMAKE_SOURCE_DIR}/assets/logo.png")
-        add_custom_command(
-            TARGET SpireOfAzael PRE_BUILD
-            COMMAND powershell -NoProfile -ExecutionPolicy Bypass
-                -File "${CMAKE_SOURCE_DIR}/scripts/png_to_ico.ps1"
-                -PngPath "${CMAKE_SOURCE_DIR}/assets/logo.png"
-                -IcoPath "${CMAKE_SOURCE_DIR}/assets/app.ico"
-            COMMENT "Regenerate app.ico from assets/logo.png"
-            VERBATIM
-        )
-    endif()
 endif()
 
 target_include_directories(SpireOfAzael PRIVATE
