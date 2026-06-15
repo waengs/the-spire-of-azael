@@ -126,12 +126,14 @@ cmake --build build --config Release --target SpireOfAzaelConsole   # terminal o
 
 ## Tech stack
 
-- **C++20** — game logic
-- **SDL2** — window, input, OpenGL context
-- **Dear ImGui** — UI rendering
-- **SQLite** — save slots
-- **stb_image** — PNG loading
-- **Press Start 2P** — pixel font ([SIL Open Font License](https://openfontlicense.org/))
+| **Category** | **Technology** | **Purpose** |
+|---|---|---|
+| **Programming Language** | C++20 | Core game logic and system implementation |
+| **Game Framework / Library** | SDL2 | Window management, input handling, and rendering support |
+|**UI Framework** | Dear ImGui | Creating in-game user interfaces and interactive menus |
+| **Database** | SQLite | Managing save slots and storing player progress |
+| **Asset Handling** | stb_image | Loading and processing image assets such as PNG files |
+| **Typography** | Press Start 2P | Pixel-style font used for the game's visual identity (SIL Open Font License) |
 
 ---
 
