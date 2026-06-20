@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <fstream>
 #include <optional>
+#include <string_view>
 
 namespace {
 
@@ -44,6 +45,106 @@ static void drawInlineHpBar(float ratio) {
     }
     draw->AddRect(pos, end, border, 1.0f);
     ImGui::Dummy(ImVec2(barW, lineH));
+}
+
+static std::string toLowerAscii(std::string value) {
+    for (char& ch : value) {
+        ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+    }
+    return value;
+}
+
+static bool endsWith(std::string_view text, std::string_view suffix) {
+    return text.size() >= suffix.size()
+        && text.compare(text.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+static std::string normalizeSpeakerName(std::string name) {
+    if (endsWith(name, " says:")) {
+        name.resize(name.size() - 6);
+    } else if (endsWith(name, " growls:")) {
+        name.resize(name.size() - 8);
+    }
+
+    const std::string key = toLowerAscii(name);
+    if (key.find("veiled woman") != std::string::npos || key == "eleanor") {
+        return "Lady Eleanor";
+    }
+    if (key.find("wiry teenager") != std::string::npos) {
+        return "Pip";
+    }
+    if (key.find("scholarly woman") != std::string::npos) {
+        return "Lyra";
+    }
+    if (key.find("broad-shouldered smith") != std::string::npos) {
+        return "Bram";
+    }
+    if (key.find("merchant") != std::string::npos && key.find("garrick") != std::string::npos) {
+        return "Garrick the Merchant";
+    }
+    if (key == "malakor") {
+        return "Demon General Malakor";
+    }
+    if (key == "azael") {
+        return "Demon Lord Azael";
+    }
+    if (key == "the armored knight") {
+        return "Armored Knight";
+    }
+    return name;
+}
+
+static size_t findNextSpeakerMarker(const std::string& log, size_t searchFrom, std::string& outMarker) {
+    static const std::string kMagenta = "\033[1;35m";
+    static const std::string kRed = "\033[1;31m";
+    static const std::string kCyan = "\033[1;36m";
+
+    const size_t pos35 = log.find(kMagenta, searchFrom);
+    const size_t pos31 = log.find(kRed, searchFrom);
+    const size_t pos36 = log.find(kCyan, searchFrom);
+
+    size_t pos = std::string::npos;
+    outMarker.clear();
+    auto consider = [&](size_t candidate, const std::string& marker) {
+        if (candidate != std::string::npos && (pos == std::string::npos || candidate < pos)) {
+            pos = candidate;
+            outMarker = marker;
+        }
+    };
+    consider(pos35, kMagenta);
+    consider(pos31, kRed);
+    consider(pos36, kCyan);
+    return pos;
+}
+
+static std::string extractLastSpeaker(const std::string& log) {
+    static const std::string kReset = "\033[0m";
+
+    std::string lastSpeaker;
+    size_t searchFrom = 0;
+    while (searchFrom < log.size()) {
+        std::string marker;
+        const size_t pos = findNextSpeakerMarker(log, searchFrom, marker);
+        if (pos == std::string::npos) {
+            break;
+        }
+
+        const size_t nameStart = pos + marker.size();
+        const size_t nameEnd = log.find(kReset, nameStart);
+        if (nameEnd == std::string::npos) {
+            break;
+        }
+
+        std::string name = log.substr(nameStart, nameEnd - nameStart);
+
+        if (endsWith(name, " says:") || endsWith(name, " growls:")) {
+            lastSpeaker = normalizeSpeakerName(name);
+        }
+
+        searchFrom = nameEnd + 1;
+    }
+
+    return lastSpeaker;
 }
 
 static void centerTextInWidth(const char* text, float containerWidth = -1.0f) {
@@ -542,6 +643,13 @@ void GameApplication::submitCommand(const std::string& command) {
 
 void GameApplication::refreshStatusCache() {
     StatusCache cache;
+
+    std::string speakerFromLog;
+    {
+        std::lock_guard<std::mutex> lock(logMutex_);
+        speakerFromLog = extractLastSpeaker(logText_);
+    }
+
     const Player* player = game_.getPlayer();
     if (player && player->getCurrentRoom()) {
         cache.location = player->getCurrentRoom()->getName();
@@ -553,6 +661,9 @@ void GameApplication::refreshStatusCache() {
         cache.loopCount = game_.getLoopCount();
         cache.fellowship = game_.getFellowship();
         cache.speakingNpc = game_.getLastTalkNpcName();
+        if (cache.speakingNpc.empty()) {
+            cache.speakingNpc = speakerFromLog;
+        }
 
         for (const auto& exitPair : player->getCurrentRoom()->getExits()) {
             cache.exits.push_back(exitPair.first);
@@ -565,6 +676,12 @@ void GameApplication::refreshStatusCache() {
             cache.inventory.push_back("[A] " + player->getEquippedArmor().getName());
         }
         for (const Item& item : player->getInventory()) {
+            if (player->hasEquippedWeapon() && item.getName() == player->getEquippedWeapon().getName()) {
+                continue;
+            }
+            if (player->hasEquippedArmor() && item.getName() == player->getEquippedArmor().getName()) {
+                continue;
+            }
             cache.inventory.push_back(item.getName());
         }
     }

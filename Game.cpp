@@ -801,7 +801,7 @@ void Game::initializeMap() {
         "Others believe they are a message left by the heroes who came before. || "
         "Nearby, !Elder Cedric! sits in faded robes beneath the statue, his eyes following every traveler who enters the square. "
         "He looks tired... but not surprised. || "
-        "Beside the fountain, a !mysterious veiled woman! turns a golden ring between her fingers. "
+        "Beside the fountain, !Lady Eleanor! turns a golden ring between her fingers. "
         "She seems lost in thought, as if remembering something from a life long forgotten.");
     Room* itemShop = new Room("Item Shop",
         "A warm, cluttered storefront filled with the scent of dried herbs, polished iron, and old leather. "
@@ -833,7 +833,7 @@ void Game::initializeMap() {
         "The trees twist overhead, their branches blocking the sunlight.||"
         "The wind whispers between the leaves like distant voices.||"
         "A sudden crash echoes deeper in the woods.||"
-        "A !broad-shouldered smith! is backed against a tree, gripping his hammer.||"
+        "!Bram! is backed against a tree, gripping his hammer.||"
         "He wipes blood from his cheek as he faces a small group of hostile creatures.||"
         "\"Not the best time to visit, friend!\"");
     Room* towerEntrance = new Room("Tower Entrance", "The ominous base of the black stone spire. Gargoyles peer down from the battlements above.");
@@ -1190,6 +1190,7 @@ bool Game::isPeacefulWorthItAnswer(const std::string& line) {
 }
 
 void Game::playRedemptionOakvaleEpilogue() {
+    lastTalkNpcName = "Elder Cedric";
     std::cout << "\n\033[1;36m[Village Square]\033[0m\n\n";
     std::cout << "The fountain still runs.\n\n";
     std::cout << "Children move through the streets as if nothing ever changed.\n\n";
@@ -1250,6 +1251,7 @@ void Game::playEndingEpilogue() {
         std::cout << "         SECRET ENDING: REDEMPTION OF THE TYRANT           \n";
         std::cout << "===========================================================\n";
         std::cout << "\033[0m\n";
+        lastTalkNpcName = "Elder Cedric";
         playRedemptionOakvaleEpilogue();
         return;
     }
@@ -1268,6 +1270,7 @@ void Game::playEndingEpilogue() {
         std::cout << "Alive.\n\n";
         std::cout << "Unbroken.\n\n";
         std::cout << "\033[1;36m[Village Square]\033[0m\n\n";
+        lastTalkNpcName = "Elder Cedric";
         std::cout << "\033[1;35mElder Cedric\033[0m bows his head as you arrive.\n\n";
         std::cout << "\"...So it was not strength alone that carried you.\"\n\n";
         std::cout << "\"It was trust.\"\n\n";
@@ -1288,6 +1291,7 @@ void Game::playEndingEpilogue() {
         std::cout << "\033[1;36m[Village Square]\033[0m\n\n";
         std::cout << "The fountain runs as it always has.\n\n";
         std::cout << "But it is quieter now.\n\n";
+        lastTalkNpcName = "Elder Cedric";
         std::cout << "\033[1;35mElder Cedric\033[0m does not speak for a long time.\n\n";
         std::cout << "\"...You saved the world.\"\n\n";
         std::cout << "A pause.\n\n";
@@ -1762,6 +1766,7 @@ void Game::handleEquip(const std::string& arg) {
 
 void Game::handleKnightTalk(const std::string& arg) {
     (void)arg;
+    lastTalkNpcName = "Armored Knight";
     static const std::vector<std::string> knightLines = {
         "The knight raises his blade. \"Another fool sent to die.\"",
         "Through the visor: \"Leave, or be broken like the shields at my feet.\"",
@@ -1780,6 +1785,7 @@ void Game::handleTalk(const std::string& arg) {
             return;
         }
         if (enemy->getName() == "Demon General Malakor") {
+            lastTalkNpcName = "Demon General Malakor";
             static const std::vector<std::string> malakorLines = {
                 "You stand in a graveyard and ask for words? Turn back, mortal.",
                 "I am the last oath before the throne. Steel, not speech, decides this hall.",
@@ -1801,6 +1807,7 @@ void Game::handleTalk(const std::string& arg) {
             return;
         }
         if (enemy->getName() == "Demon Lord Azael") {
+            lastTalkNpcName = "Demon Lord Azael";
             static const std::vector<std::string> azaelLines = {
                 "Kneel, and I may grant you a quick death.",
                 "I can hear fear in your breath, little hero.",
@@ -2139,6 +2146,7 @@ void Game::startCombat(Enemy* enemy) {
         && !bramSavedGoblin && !bramRecruited && findNPCInCurrentRoom("bram");
     if (forestGoblinFight) {
         fighters.push_back(defaultFellowshipStats("Bram"));
+        lastTalkNpcName = "Bram";
         std::cout << "\033[1;36mBram\033[0m raises his hammer beside you!\n";
     }
     if (fighters.size() > 1) {
@@ -2616,6 +2624,7 @@ void Game::startCombat(Enemy* enemy) {
             bramReadyToRecruit = true;
             specialGiveUnlocked = true;
             specialRecruitUnlocked = true;
+            lastTalkNpcName = "Bram";
             std::cout << "\nBram lowers his hammer and wipes the blood from his brow.\n\n";
             std::cout << "\033[1;35mBram says:\033[0m \"Not bad.\"\n\n";
             std::cout << "He looks at the scattered goblins.\n\n";
@@ -3407,6 +3416,7 @@ bool Game::charmValerieWithRibbon() {
     valerieReadyToRecruit = true;
     specialGiveUnlocked = true;
     specialRecruitUnlocked = true;
+    lastTalkNpcName = "Valerie";
     enemy->setHealth(0);
 
     if (valerieNpc && !valerieNpcPlaced) {
@@ -3452,6 +3462,7 @@ bool Game::charmKnightWithRing() {
     garrisonCharmed = true;
     enemy->setName("Sir Garrison");
     enemy->setHealth(0);
+    lastTalkNpcName = "Sir Garrison";
     if (!isInParty("garrison")) {
         party.push_back("Sir Garrison");
         registerFellowshipMember("Sir Garrison");

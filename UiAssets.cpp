@@ -150,6 +150,8 @@ bool UiAssets::init() {
         "portraits/portrait_garrison.png",
         "portraits/portrait_eleanor.png",
         "portraits/portrait_garrick.png",
+        "portraits/portrait_malakor.png",
+        "portraits/portrait_azael.png",
     };
 
     for (const std::string& path : preload) {
@@ -220,16 +222,17 @@ std::string UiAssets::portraitAssetId(const std::string& npcName) {
     if (key.find("valerie") != std::string::npos) {
         return "portrait_valerie";
     }
-    if (key.find("garrison") != std::string::npos || key.find("knight") != std::string::npos) {
+    if (key.find("garrison") != std::string::npos || key.find("knight") != std::string::npos
+        || key.find("armored") != std::string::npos) {
         return "portrait_garrison";
     }
-    if (key.find("eleanor") != std::string::npos) {
+    if (key.find("eleanor") != std::string::npos || key.find("veiled woman") != std::string::npos) {
         return "portrait_eleanor";
     }
     if (key.find("garrick") != std::string::npos || key.find("merchant") != std::string::npos) {
         return "portrait_garrick";
     }
-    if (key.find("malakor") != std::string::npos) {
+    if (key.find("malakor") != std::string::npos || key.find("makalor") != std::string::npos) {
         return "portrait_malakor";
     }
     if (key.find("azael") != std::string::npos) {

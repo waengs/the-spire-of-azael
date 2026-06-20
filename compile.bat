@@ -17,8 +17,9 @@ if errorlevel 1 exit /b 1
 
 echo.
 echo Build complete:
-echo   Game:  build\Release\SpireOfAzael.exe
-echo   Saves: spire_save.db (created at runtime)
+echo   Game:     build\Release\SpireOfAzael.exe
+echo   Console:  build\Release\SpireOfAzaelConsole.exe
+echo   Saves:    spire_save.db (created at runtime)
 echo.
 
 endlocal

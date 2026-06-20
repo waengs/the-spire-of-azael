@@ -1,4 +1,0 @@
-#include <winuser.h>
-
-// Application icon shown in Explorer, taskbar, and Alt+Tab.
-IDI_ICON1 ICON "app.ico"

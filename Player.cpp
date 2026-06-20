@@ -212,7 +212,15 @@ void Player::showInventory() const {
     if (inventory.empty()) {
         std::cout << "  (empty)\n";
     } else {
+        bool anyBagItem = false;
         for (const auto& item : inventory) {
+            if (weaponEquipped && item.getName() == equippedWeapon.getName()) {
+                continue;
+            }
+            if (armorEquipped && item.getName() == equippedArmor.getName()) {
+                continue;
+            }
+            anyBagItem = true;
             std::cout << "  - \033[1;33m" << item.getName() << "\033[0m: " << item.getDescription();
             if (item.getType() == ItemType::WEAPON) {
                 std::cout << " [+" << item.getEffectValue() << " attack]";
@@ -225,6 +233,9 @@ void Player::showInventory() const {
                 std::cout << " (" << item.getGoldValue() << "g value)";
             }
             std::cout << "\n";
+        }
+        if (!anyBagItem) {
+            std::cout << "  (empty)\n";
         }
     }
     std::cout << "\033[1;36m=================\033[0m\n";
